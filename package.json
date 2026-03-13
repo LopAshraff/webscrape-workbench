@@ -1,6 +1,6 @@
 {
   "name": "webscrape-workbench",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "type": "module",
   "author": {
@@ -28,7 +28,7 @@
     "dist:win:signed": "pwsh -ExecutionPolicy Bypass -File scripts/build-signed-win.ps1",
     "start": "node src/cli.js",
     "scrape": "node src/cli.js",
-    "smoke": "node tests/smoke.js && node tests/crawl-smoke.js && node tests/profile-smoke.js"
+    "smoke": "node tests/smoke.js && node tests/crawl-smoke.js && node tests/profile-smoke.js && node tests/app-server-smoke.js"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

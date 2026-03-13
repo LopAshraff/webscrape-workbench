@@ -1,7 +1,6 @@
 const { app, BrowserWindow, dialog } = require("electron");
 const path = require("node:path");
-const net = require("node:net");
-const { spawn } = require("node:child_process");
+const { fork } = require("node:child_process");
 
 let mainWindow;
 let serverProcess;
@@ -9,8 +8,7 @@ let serverPort;
 
 app.whenReady().then(async () => {
   try {
-    serverPort = await findOpenPort(4173);
-    await startServer(serverPort);
+    serverPort = await startServer();
     await waitForServer(serverPort);
     createWindow(serverPort);
   } catch (error) {
@@ -53,18 +51,19 @@ function createWindow(port) {
   mainWindow.loadURL(`http://127.0.0.1:${port}`);
 }
 
-function startServer(port) {
+function startServer() {
   return new Promise((resolve, reject) => {
     const entry = path.join(__dirname, "..", "src", "app-server.js");
-    serverProcess = spawn(process.execPath, [entry], {
+    serverProcess = fork(entry, [], {
       env: {
         ...process.env,
-        PORT: String(port)
+        PORT: "0"
       },
-      stdio: ["ignore", "pipe", "pipe"]
+      silent: true
     });
 
     let settled = false;
+    let stdoutBuffer = "";
     const finish = callback => value => {
       if (settled) return;
       settled = true;
@@ -79,9 +78,10 @@ function startServer(port) {
       }
     });
     serverProcess.stdout.on("data", chunk => {
-      const text = chunk.toString();
-      if (text.includes("webscrape UI on")) {
-        finish(resolve)();
+      stdoutBuffer += chunk.toString();
+      const match = stdoutBuffer.match(/webscrape UI on http:\/\/localhost:(\d+)/);
+      if (match) {
+        finish(resolve)(Number(match[1]));
       }
     });
     serverProcess.once("exit", code => {
@@ -120,21 +120,5 @@ function waitForServer(port) {
     };
 
     attempt();
-  });
-}
-
-function findOpenPort(startPort) {
-  return new Promise(resolve => {
-    const tryPort = port => {
-      const server = net.createServer();
-      server.unref();
-      server.on("error", () => tryPort(port + 1));
-      server.listen(port, "127.0.0.1", () => {
-        const { port: openPort } = server.address();
-        server.close(() => resolve(openPort));
-      });
-    };
-
-    tryPort(startPort);
   });
 }
