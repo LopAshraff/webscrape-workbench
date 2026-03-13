@@ -57,6 +57,17 @@ Di situ user hanya perlu:
 3. tekan `Run scrape`
 4. buka hasil `Markdown` atau `JSON`
 
+Untuk Windows, paling senang cuma double-click:
+
+- [launch-webscrape-ui.cmd](/Users/muham/Dev/src/webscrape-workbench/launch-webscrape-ui.cmd)
+
+Fail itu akan:
+
+1. semak `Node.js`
+2. install dependencies kalau belum ada
+3. buka browser
+4. start local web app
+
 ## Cheat Sheet
 
 Command paling ringkas:
