@@ -1,4 +1,5 @@
 const profileEl = document.querySelector("#profile");
+const profileHelpEl = document.querySelector("#profile-help");
 const urlEl = document.querySelector("#url");
 const selectorEl = document.querySelector("#selector");
 const maxPagesEl = document.querySelector("#max-pages");
@@ -13,6 +14,7 @@ const summaryCopyEl = document.querySelector("#summary-copy");
 const resultsEl = document.querySelector("#results");
 const recentRunsEl = document.querySelector("#recent-runs");
 let lastOutputDir = "";
+let profileMap = {};
 
 await loadProfiles();
 await loadRecentRuns();
@@ -109,14 +111,17 @@ profileEl.addEventListener("change", async () => {
   if (profile.maxPages) {
     maxPagesEl.value = String(profile.maxPages);
   }
+  profileHelpEl.textContent = describeProfile(profileEl.value, profile);
 });
 
 async function loadProfiles() {
   const response = await fetch("/api/profiles");
   const data = await response.json();
+  profileMap = data.profiles;
   profileEl.innerHTML = `<option value="">None</option>${Object.keys(data.profiles)
     .map(name => `<option value="${name}">${name}</option>`)
     .join("")}`;
+  profileHelpEl.textContent = "Use a built-in preset when you want less manual setup.";
 }
 
 async function loadRecentRuns() {
@@ -146,4 +151,15 @@ function escapeHtml(text) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+function describeProfile(name, profile) {
+  const descriptions = {
+    article: "Good for blog posts, articles, and news pages.",
+    docs: "Good for documentation pages and same-domain crawling.",
+    jsapp: "Good for pages that only reveal content after JavaScript loads.",
+    media: "Good when you want to save page images as well."
+  };
+
+  return descriptions[name] || `Profile loaded${profile.selector ? ` with selector: ${profile.selector}` : "."}`;
 }

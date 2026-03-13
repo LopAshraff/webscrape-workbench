@@ -12,6 +12,20 @@
         <p class="eyebrow">LOCAL WEB APP</p>
         <h1>Scrape pages without touching the terminal.</h1>
         <p class="lede">Paste a URL, choose a preset, and save clean output locally as JSON and Markdown.</p>
+        <div class="hero-grid">
+          <article class="hero-card">
+            <strong>1</strong>
+            <span>Paste a page URL</span>
+          </article>
+          <article class="hero-card">
+            <strong>2</strong>
+            <span>Pick a profile if needed</span>
+          </article>
+          <article class="hero-card">
+            <strong>3</strong>
+            <span>Open Markdown or JSON results</span>
+          </article>
+        </div>
       </section>
 
       <section class="panel form-panel">
@@ -22,15 +36,18 @@
           <div>
             <label for="profile">Profile</label>
             <select id="profile"></select>
+            <p id="profile-help" class="hint">Use a built-in preset when you want less manual setup.</p>
           </div>
           <div>
             <label for="max-pages">Max pages</label>
             <input id="max-pages" type="number" min="1" value="10" />
+            <p class="hint">Only used when crawl mode is enabled.</p>
           </div>
         </div>
 
         <label for="selector">Selector</label>
         <input id="selector" type="text" placeholder=".article-body" />
+        <p class="hint">Optional. Leave blank to let the extractor detect the main content automatically.</p>
 
         <div class="toggle-grid">
           <label><input id="crawl" type="checkbox" /> Crawl same domain</label>
@@ -69,6 +86,29 @@
         </div>
         <div id="recent-runs" class="results">
           <p class="empty">No recent runs yet.</p>
+        </div>
+      </section>
+
+      <section class="panel tips-panel">
+        <div class="output-head">
+          <div>
+            <h2>Quick tips</h2>
+            <p class="lede">Pick the simplest path first, then turn on extra options only when needed.</p>
+          </div>
+        </div>
+        <div class="tips-grid">
+          <article class="tip-card">
+            <strong>Use `article`</strong>
+            <p>Best for blog posts, news pages, and long-form content.</p>
+          </article>
+          <article class="tip-card">
+            <strong>Use `docs`</strong>
+            <p>Best when you want the app to follow several documentation pages in the same domain.</p>
+          </article>
+          <article class="tip-card">
+            <strong>Use browser mode</strong>
+            <p>Turn this on when the page looks empty until JavaScript finishes loading.</p>
+          </article>
         </div>
       </section>
     </main>
