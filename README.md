@@ -68,6 +68,24 @@ Fail itu akan:
 3. buka browser
 4. start local web app
 
+## Desktop App
+
+Kalau kau mahu rasa macam software biasa, repo ini sekarang juga ada wrapper desktop Windows.
+
+Buka desktop app semasa development:
+
+```bash
+npm run desktop
+```
+
+Build installer Windows:
+
+```bash
+npm run dist:win
+```
+
+Installer akan keluar dalam folder `dist/`.
+
 ## Cheat Sheet
 
 Command paling ringkas:

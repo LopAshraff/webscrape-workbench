@@ -3,15 +3,46 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "author": "Muhammad Khoirul Ashraff",
   "description": "CLI-first local web scraping utility for saving clean content, metadata, and assets from URLs.",
+  "main": "electron/main.cjs",
   "bin": {
     "webscrape": "./src/cli.js"
   },
   "scripts": {
     "app": "node src/app-server.js",
+    "desktop": "electron .",
+    "dist:win": "electron-builder --win nsis",
     "start": "node src/cli.js",
     "scrape": "node src/cli.js",
     "smoke": "node tests/smoke.js && node tests/crawl-smoke.js && node tests/profile-smoke.js"
+  },
+  "build": {
+    "appId": "com.lopashraff.webscrapeworkbench",
+    "productName": "Webscrape Workbench",
+    "files": [
+      "src/**/*",
+      "web/**/*",
+      "electron/**/*",
+      "package.json",
+      "package-lock.json",
+      "LICENSE"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
@@ -21,5 +52,9 @@
     "p-limit": "^7.1.1",
     "playwright": "^1.54.2",
     "turndown": "^7.2.1"
+  },
+  "devDependencies": {
+    "electron": "^36.9.5",
+    "electron-builder": "^26.8.1"
   }
 }

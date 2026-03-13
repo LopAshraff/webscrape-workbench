@@ -2,4 +2,5 @@ tmp/
 node_modules/
 scrapes/
 scrapes-ui/
+dist/
 *.log
