@@ -1,0 +1,159 @@
+# webscrape-workbench
+
+CLI-first utility untuk mudahkan web scraping dan simpan hasil dalam format yang senang diguna semula.
+
+Tool ini fokus pada kerja yang paling kerap diperlukan semasa scrape:
+
+- fetch satu atau banyak URL
+- crawl beberapa page dalam domain yang sama
+- extract tajuk, metadata, kandungan utama, links, dan images
+- simpan `raw.html`, `content.json`, dan `content.md`
+- hasilkan `run-summary.json`, `run-summary.jsonl`, dan `run-summary.csv`
+- optional `--assets` untuk download imej halaman
+- optional `--browser` untuk page yang perlukan rendering JavaScript
+
+## Kenapa tool ini wujud
+
+Kebanyakan script scrape cepat jadi serabut kerana:
+
+- fetch bercampur dengan extraction
+- output tak konsisten
+- setiap site perlu ditangani semula dari kosong
+
+`webscrape-workbench` pecahkan kerja itu kepada pipeline yang lebih bersih:
+
+1. fetch page
+2. extract main content
+3. normalize links dan media
+4. save output yang boleh diinspeksi dan diproses semula
+
+## Quick Start
+
+```bash
+npm install
+node src/cli.js https://example.com
+```
+
+Output akan masuk ke folder `scrapes/`.
+
+## CLI Usage
+
+```bash
+node src/cli.js [url] [options]
+```
+
+Pilihan utama:
+
+- `--input <file>`: fail teks dengan satu URL setiap baris
+- `--output <dir>`: folder output, default `scrapes`
+- `--format <formats>`: contoh `json,md`
+- `--assets`: download image assets
+- `--browser`: render page dengan Playwright sebelum extraction
+- `--selector <css>`: hadkan extraction kepada CSS selector tertentu
+- `--crawl`: ikut link dalam domain yang sama bermula dari URL pertama
+- `--max-pages <number>`: had crawl, default `10`
+- `--include-subdomains`: benarkan crawl subdomain
+- `--summary-formats <formats>`: contoh `json,jsonl,csv`
+- `--concurrency <number>`: bilangan job serentak
+- `--timeout <ms>`: request timeout
+- `--user-agent <value>`: override user-agent
+
+## Examples
+
+Scrape satu URL:
+
+```bash
+node src/cli.js https://example.com/articles/hello-world
+```
+
+Scrape banyak URL dari fail:
+
+```bash
+node src/cli.js --input urls.txt --output scrapes/batch-run
+```
+
+Crawl satu domain kecil:
+
+```bash
+node src/cli.js https://example.com/docs --crawl --max-pages 20
+```
+
+Scrape page JS-heavy:
+
+```bash
+node src/cli.js https://example.com/app --browser
+```
+
+Scrape dan download imej:
+
+```bash
+node src/cli.js https://example.com/post --assets
+```
+
+Scrape kandungan dalam selector tertentu sahaja:
+
+```bash
+node src/cli.js https://example.com/post --selector ".article-body"
+```
+
+## Output Structure
+
+Setiap URL akan dapat satu folder sendiri:
+
+```text
+scrapes/
+  run-summary.json
+  run-summary.jsonl
+  run-summary.csv
+  example-com-example-article-title/
+    raw.html
+    content.json
+    content.md
+    assets/
+```
+
+Kandungan fail:
+
+- `raw.html`: salinan HTML asal
+- `content.json`: metadata + content yang sudah diextract
+- `content.md`: versi markdown yang lebih mudah dibaca/diolah
+- `assets/`: fail image yang berjaya dimuat turun
+- `run-summary.*`: ringkasan semua page dalam satu run, sesuai untuk audit atau dataset pipeline
+
+## Browser Mode
+
+`--browser` guna Playwright dan headless Chromium untuk render page sebelum scrape. Ini berguna untuk:
+
+- page yang load content melalui JavaScript
+- “load after render” content
+- site yang tak beri HTML penuh pada initial request
+
+Jika browser mode belum pernah dipasang pada mesin ini, pasang Chromium sekali:
+
+```bash
+npx playwright install chromium
+```
+
+## Development
+
+Run smoke test:
+
+```bash
+npm run smoke
+```
+
+Smoke test guna fixture lokal, jadi ia tak bergantung pada internet untuk pass.
+
+## Notes
+
+- Tool ini tak cuba bypass auth, DRM, atau paywall
+- Guna hanya pada content yang memang sah untuk kau akses dan simpan
+- Extraction “main content” ialah heuristic, jadi untuk site pelik kadang-kadang `--selector` lebih tepat
+
+## Existing Files
+
+Repo ini masih ada `docs/` dan `output/` lama daripada kerja lain. Tool scraping baru duduk dalam:
+
+- `src/`
+- `tests/`
+- `package.json`

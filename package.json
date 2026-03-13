@@ -1,0 +1,23 @@
+{
+  "name": "webscrape-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "CLI-first local web scraping utility for saving clean content, metadata, and assets from URLs.",
+  "bin": {
+    "webscrape": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js",
+    "smoke": "node tests/smoke.js && node tests/crawl-smoke.js"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "cheerio": "^1.1.2",
+    "commander": "^14.0.1",
+    "jsdom": "^27.0.0",
+    "p-limit": "^7.1.1",
+    "playwright": "^1.54.2",
+    "turndown": "^7.2.1"
+  }
+}
