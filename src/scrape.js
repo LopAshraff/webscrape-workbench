@@ -27,7 +27,8 @@ export async function scrapeMany(urls, options) {
   return {
     ok: urls.length - failed,
     failed,
-    total: urls.length
+    total: urls.length,
+    pages: succeeded
   };
 }
 
@@ -68,6 +69,7 @@ export async function crawlSite(startUrl, options) {
   return {
     ok: pages.length,
     failed,
-    total: pages.length + failed
+    total: pages.length + failed,
+    pages
   };
 }

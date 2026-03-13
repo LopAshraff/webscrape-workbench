@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Webscrape Workbench</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">LOCAL WEB APP</p>
+        <h1>Scrape pages without touching the terminal.</h1>
+        <p class="lede">Paste a URL, choose a preset, and save clean output locally as JSON and Markdown.</p>
+      </section>
+
+      <section class="panel form-panel">
+        <label for="url">URL</label>
+        <input id="url" type="url" placeholder="https://example.com/article" />
+
+        <div class="grid">
+          <div>
+            <label for="profile">Profile</label>
+            <select id="profile"></select>
+          </div>
+          <div>
+            <label for="max-pages">Max pages</label>
+            <input id="max-pages" type="number" min="1" value="10" />
+          </div>
+        </div>
+
+        <label for="selector">Selector</label>
+        <input id="selector" type="text" placeholder=".article-body" />
+
+        <div class="toggle-grid">
+          <label><input id="crawl" type="checkbox" /> Crawl same domain</label>
+          <label><input id="browser" type="checkbox" /> Browser mode</label>
+          <label><input id="assets" type="checkbox" /> Download images</label>
+          <label><input id="subdomains" type="checkbox" /> Include subdomains</label>
+        </div>
+
+        <div class="actions">
+          <button id="run" type="button">Run scrape</button>
+          <span id="status">Idle</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="output-head">
+          <div>
+            <h2>Latest run</h2>
+            <p id="summary-copy">No scrape has run yet.</p>
+          </div>
+        </div>
+        <div id="results" class="results">
+          <p class="empty">Run a scrape to see saved pages here.</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

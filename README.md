@@ -36,6 +36,27 @@ npx webscrape https://example.com
 
 Output akan masuk ke folder `scrapes/`.
 
+## User-Friendly Mode
+
+Kalau kau nak guna tanpa terminal yang banyak, buka local web app:
+
+```bash
+npm run app
+```
+
+Lepas itu buka:
+
+```text
+http://localhost:4173
+```
+
+Di situ user hanya perlu:
+
+1. tampal URL
+2. pilih profile kalau perlu
+3. tekan `Run scrape`
+4. buka hasil `Markdown` atau `JSON`
+
 ## Cheat Sheet
 
 Command paling ringkas:

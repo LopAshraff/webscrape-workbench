@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 import fs from "node:fs/promises";
-import path from "node:path";
 import process from "node:process";
 import { Command } from "commander";
-import { scrapeMany, crawlSite } from "./scrape.js";
 import { loadUrlsFromFile } from "./input.js";
-import { getBuiltInProfiles, loadProfile } from "./profiles.js";
+import { getBuiltInProfiles } from "./profiles.js";
+import { runScrape } from "./run.js";
 
 const program = new Command();
 const builtInProfiles = getBuiltInProfiles();
@@ -44,35 +43,28 @@ program
       program.error("Provide a URL or use --input with a file of URLs.");
     }
 
-    await fs.mkdir(path.resolve(options.output), { recursive: true });
-    const profile = await loadProfile(options.profile, options.profileFile);
-
-    const sharedOptions = {
-      outputDir: path.resolve(options.output),
+    const result = await runScrape(uniqueUrls, {
+      outputDir: options.output,
       formats: options.format.split(",").map(item => item.trim()).filter(Boolean),
       summaryFormats: options.summaryFormats.split(",").map(item => item.trim()).filter(Boolean),
-      downloadAssets: options.assets || profile.downloadAssets || false,
-      browser: options.browser || profile.browser || false,
-      selector: options.selector || profile.selector,
+      downloadAssets: options.assets,
+      browser: options.browser,
+      selector: options.selector,
+      profile: options.profile,
+      profileFile: options.profileFile,
+      crawl: options.crawl,
+      maxPages: options.maxPages,
+      includeSubdomains: options.includeSubdomains,
       timeoutMs: options.timeout,
       concurrency: options.concurrency,
       userAgent: options.userAgent
-    };
-
-    const shouldCrawl = options.crawl || profile.crawl || false;
-    const result = shouldCrawl
-      ? await crawlSite(uniqueUrls[0], {
-          ...sharedOptions,
-          maxPages: options.maxPages || profile.maxPages || 10,
-          includeSubdomains: options.includeSubdomains
-        })
-      : await scrapeMany(uniqueUrls, sharedOptions);
+    });
 
     const summary = {
       ok: result.ok,
       failed: result.failed,
       total: result.total,
-      outputDir: path.resolve(options.output)
+      outputDir: result.outputDir
     };
 
     process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
