@@ -7,11 +7,15 @@ const browserEl = document.querySelector("#browser");
 const assetsEl = document.querySelector("#assets");
 const subdomainsEl = document.querySelector("#subdomains");
 const runEl = document.querySelector("#run");
+const openFolderEl = document.querySelector("#open-folder");
 const statusEl = document.querySelector("#status");
 const summaryCopyEl = document.querySelector("#summary-copy");
 const resultsEl = document.querySelector("#results");
+const recentRunsEl = document.querySelector("#recent-runs");
+let lastOutputDir = "";
 
 await loadProfiles();
+await loadRecentRuns();
 
 runEl.addEventListener("click", async () => {
   if (!urlEl.value.trim()) {
@@ -47,6 +51,7 @@ runEl.addEventListener("click", async () => {
     }
 
     statusEl.textContent = "Done";
+    lastOutputDir = data.summary.outputDir;
     summaryCopyEl.textContent = `${data.summary.ok} page(s) saved. Output: ${data.summary.outputDir}`;
     resultsEl.innerHTML = data.pages
       .map(
@@ -64,12 +69,31 @@ runEl.addEventListener("click", async () => {
         `
       )
       .join("");
+    await loadRecentRuns();
   } catch (error) {
     statusEl.textContent = "Error";
     resultsEl.innerHTML = `<p class="empty">${escapeHtml(error.message || "Scrape failed")}</p>`;
   } finally {
     runEl.disabled = false;
   }
+});
+
+openFolderEl.addEventListener("click", async () => {
+  if (!lastOutputDir) {
+    statusEl.textContent = "Run a scrape first";
+    return;
+  }
+
+  const response = await fetch("/api/open-output", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({ outputDir: lastOutputDir })
+  });
+
+  const data = await response.json();
+  statusEl.textContent = response.ok && data.ok ? "Folder opened" : data.error || "Could not open folder";
 });
 
 profileEl.addEventListener("change", async () => {
@@ -93,6 +117,28 @@ async function loadProfiles() {
   profileEl.innerHTML = `<option value="">None</option>${Object.keys(data.profiles)
     .map(name => `<option value="${name}">${name}</option>`)
     .join("")}`;
+}
+
+async function loadRecentRuns() {
+  const response = await fetch("/api/runs");
+  const data = await response.json();
+
+  if (!data.runs?.length) {
+    recentRunsEl.innerHTML = '<p class="empty">No recent runs yet.</p>';
+    return;
+  }
+
+  recentRunsEl.innerHTML = data.runs
+    .map(
+      run => `
+        <article class="result-card">
+          <h3>${escapeHtml(run.firstTitle)}</h3>
+          <p class="meta">${escapeHtml(run.outputDir)}</p>
+          <p class="meta">${run.pages} page(s)</p>
+        </article>
+      `
+    )
+    .join("");
 }
 
 function escapeHtml(text) {

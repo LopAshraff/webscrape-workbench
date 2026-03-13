@@ -83,7 +83,8 @@ select {
 .grid,
 .toggle-grid,
 .actions,
-.output-head {
+.output-head,
+.toolbar {
   display: grid;
   gap: 12px;
 }
@@ -129,6 +130,12 @@ button {
   cursor: pointer;
 }
 
+button.ghost {
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
 #status {
   color: var(--muted);
 }
@@ -170,6 +177,11 @@ button {
   font-weight: 600;
 }
 
+.toolbar {
+  grid-template-columns: auto;
+  justify-content: end;
+}
+
 @media (max-width: 720px) {
   .shell {
     width: min(100% - 20px, 980px);
@@ -181,5 +193,9 @@ button {
   .actions,
   .output-head {
     grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    justify-content: stretch;
   }
 }

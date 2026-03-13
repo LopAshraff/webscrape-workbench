@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
 import process from "node:process";
+import { execFile, exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { getBuiltInProfiles } from "./profiles.js";
 import { runScrape } from "./run.js";
@@ -31,6 +32,11 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "GET" && url.pathname === "/api/profiles") {
     return sendJson(res, 200, { profiles: getBuiltInProfiles() });
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/runs") {
+    const runs = await listRecentRuns();
+    return sendJson(res, 200, { runs });
   }
 
   if (req.method === "POST" && url.pathname === "/api/scrape") {
@@ -79,6 +85,25 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === "POST" && url.pathname === "/api/open-output") {
+    try {
+      const body = await readJson(req);
+      const requested = path.resolve(String(body.outputDir ?? ""));
+      if (!requested.startsWith(outputRoot)) {
+        return sendJson(res, 400, { ok: false, error: "Invalid output directory" });
+      }
+
+      await fs.access(requested);
+      const opened = await openFolder(requested);
+      return sendJson(res, 200, { ok: true, opened });
+    } catch (error) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: error instanceof Error ? error.message : "Could not open folder"
+      });
+    }
+  }
+
   if (req.method === "GET" && url.pathname.startsWith("/outputs/")) {
     const relativePath = decodeURIComponent(url.pathname.replace("/outputs/", ""));
     const filePath = path.join(outputRoot, relativePath);
@@ -102,6 +127,29 @@ const server = http.createServer(async (req, res) => {
 server.listen(port, () => {
   process.stdout.write(`webscrape UI on http://localhost:${port}\n`);
 });
+
+async function listRecentRuns() {
+  const entries = await fs.readdir(outputRoot, { withFileTypes: true });
+  const directories = entries.filter(entry => entry.isDirectory()).map(entry => entry.name);
+  const runs = [];
+
+  for (const name of directories.sort().reverse().slice(0, 8)) {
+    const runDir = path.join(outputRoot, name);
+    const summaryPath = path.join(runDir, "run-summary.json");
+
+    try {
+      const summary = JSON.parse(await fs.readFile(summaryPath, "utf8"));
+      runs.push({
+        name,
+        outputDir: runDir,
+        pages: summary.length,
+        firstTitle: summary[0]?.title ?? "Untitled run"
+      });
+    } catch {}
+  }
+
+  return runs;
+}
 
 async function sendFile(res, filePath, contentType) {
   const content = await fs.readFile(filePath);
@@ -128,5 +176,25 @@ function readJson(req) {
       }
     });
     req.on("error", reject);
+  });
+}
+
+function openFolder(folderPath) {
+  return new Promise((resolve, reject) => {
+    execFile("explorer.exe", [folderPath], error => {
+      if (!error) {
+        resolve(true);
+        return;
+      }
+
+      exec(`start "" "${folderPath}"`, { shell: "cmd.exe" }, fallbackError => {
+        if (fallbackError) {
+          resolve(false);
+          return;
+        }
+
+        resolve(true);
+      });
+    });
   });
 }
