@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node src/cli.js",
     "scrape": "node src/cli.js",
-    "smoke": "node tests/smoke.js && node tests/crawl-smoke.js"
+    "smoke": "node tests/smoke.js && node tests/crawl-smoke.js && node tests/profile-smoke.js"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

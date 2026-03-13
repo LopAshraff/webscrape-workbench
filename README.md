@@ -82,6 +82,12 @@ Guna selector tertentu:
 npx webscrape https://example.com/post --selector ".article-body"
 ```
 
+Guna profile built-in:
+
+```bash
+npx webscrape https://example.com/docs --profile docs
+```
+
 Tukar folder output:
 
 ```bash
@@ -108,6 +114,8 @@ Pilihan utama:
 - `--assets`: download image assets
 - `--browser`: render page dengan Playwright sebelum extraction
 - `--selector <css>`: hadkan extraction kepada CSS selector tertentu
+- `--profile <name>`: profile built-in seperti `article`, `docs`, `jsapp`, `media`
+- `--profile-file <file>`: fail JSON dengan preset scrape sendiri
 - `--crawl`: ikut link dalam domain yang sama bermula dari URL pertama
 - `--max-pages <number>`: had crawl, default `10`
 - `--include-subdomains`: benarkan crawl subdomain
@@ -154,6 +162,12 @@ Scrape kandungan dalam selector tertentu sahaja:
 npx webscrape https://example.com/post --selector ".article-body"
 ```
 
+Scrape guna profile:
+
+```bash
+npx webscrape https://example.com/docs --profile docs
+```
+
 ## Output Structure
 
 Setiap URL akan dapat satu folder sendiri:
@@ -190,6 +204,42 @@ Jika browser mode belum pernah dipasang pada mesin ini, pasang Chromium sekali:
 
 ```bash
 npx playwright install chromium
+```
+
+## Profiles
+
+Built-in profile yang ada sekarang:
+
+- `article`: fokus content article/post
+- `docs`: crawl docs page dalam domain yang sama
+- `jsapp`: paksa browser mode untuk page JavaScript-heavy
+- `media`: download assets sekali
+
+Contoh:
+
+```bash
+npx webscrape https://example.com/blog/post --profile article
+npx webscrape https://example.com/docs --profile docs
+```
+
+Kalau kau nak profile sendiri, buat fail JSON:
+
+```json
+{
+  "mydocs": {
+    "crawl": true,
+    "maxPages": 40,
+    "selector": ".content-body",
+    "browser": false,
+    "downloadAssets": false
+  }
+}
+```
+
+Lepas itu guna:
+
+```bash
+npx webscrape https://example.com/docs --profile mydocs --profile-file profiles.json
 ```
 
 ## Development
