@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node src/cli.js",
+    "scrape": "node src/cli.js",
     "smoke": "node tests/smoke.js && node tests/crawl-smoke.js"
   },
   "dependencies": {

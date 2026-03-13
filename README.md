@@ -31,15 +31,73 @@ Kebanyakan script scrape cepat jadi serabut kerana:
 
 ```bash
 npm install
-node src/cli.js https://example.com
+npx webscrape https://example.com
 ```
 
 Output akan masuk ke folder `scrapes/`.
 
+## Cheat Sheet
+
+Command paling ringkas:
+
+```bash
+npx webscrape <URL>
+```
+
+Contoh biasa:
+
+Scrape satu page:
+
+```bash
+npx webscrape https://example.com/article
+```
+
+Scrape banyak URL dari fail:
+
+```bash
+npx webscrape --input urls.txt
+```
+
+Crawl beberapa page dalam domain yang sama:
+
+```bash
+npx webscrape https://example.com/docs --crawl --max-pages 20
+```
+
+Pakai browser mode:
+
+```bash
+npx webscrape https://example.com/app --browser
+```
+
+Download imej sekali:
+
+```bash
+npx webscrape https://example.com/post --assets
+```
+
+Guna selector tertentu:
+
+```bash
+npx webscrape https://example.com/post --selector ".article-body"
+```
+
+Tukar folder output:
+
+```bash
+npx webscrape https://example.com --output hasil-scrape
+```
+
+Kalau kau hanya nak test cepat tanpa option tambahan, ini pun boleh:
+
+```bash
+npm run scrape -- https://example.com
+```
+
 ## CLI Usage
 
 ```bash
-node src/cli.js [url] [options]
+npx webscrape [url] [options]
 ```
 
 Pilihan utama:
@@ -63,37 +121,37 @@ Pilihan utama:
 Scrape satu URL:
 
 ```bash
-node src/cli.js https://example.com/articles/hello-world
+npx webscrape https://example.com/articles/hello-world
 ```
 
 Scrape banyak URL dari fail:
 
 ```bash
-node src/cli.js --input urls.txt --output scrapes/batch-run
+npx webscrape --input urls.txt --output scrapes/batch-run
 ```
 
 Crawl satu domain kecil:
 
 ```bash
-node src/cli.js https://example.com/docs --crawl --max-pages 20
+npx webscrape https://example.com/docs --crawl --max-pages 20
 ```
 
 Scrape page JS-heavy:
 
 ```bash
-node src/cli.js https://example.com/app --browser
+npx webscrape https://example.com/app --browser
 ```
 
 Scrape dan download imej:
 
 ```bash
-node src/cli.js https://example.com/post --assets
+npx webscrape https://example.com/post --assets
 ```
 
 Scrape kandungan dalam selector tertentu sahaja:
 
 ```bash
-node src/cli.js https://example.com/post --selector ".article-body"
+npx webscrape https://example.com/post --selector ".article-body"
 ```
 
 ## Output Structure
