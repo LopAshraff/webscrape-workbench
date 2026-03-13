@@ -86,6 +86,15 @@ npm run dist:win
 
 Installer akan keluar dalam folder `dist/`.
 
+Kalau kau nak build yang memang bertandatangan pada mesin Windows ini:
+
+```bash
+npm run cert:dev
+npm run dist:win:signed
+```
+
+Build `signed` di atas guna sijil code-signing dev tempatan `CN=LopAshraff`.
+
 ## Cheat Sheet
 
 Command paling ringkas:
@@ -301,6 +310,21 @@ npm run smoke
 ```
 
 Smoke test guna fixture lokal, jadi ia tak bergantung pada internet untuk pass.
+
+## Code Signing
+
+Repo ini sekarang sokong tiga mode build Windows:
+
+- `npm run dist:win`: build biasa, unsigned jika tiada credential signing
+- `npm run cert:dev`: cipta atau reuse sijil code-signing dev tempatan dan trust pada user semasa
+- `npm run dist:win:signed`: build installer yang signed dengan sijil dev tempatan itu
+
+Untuk release awam yang betul-betul trusted, sediakan salah satu:
+
+- `WIN_CSC_LINK` + `WIN_CSC_KEY_PASSWORD` untuk fail `.pfx`
+- `WIN_CERT_SUBJECT` atau `WIN_CERT_SHA1` jika sijil awam sudah ada dalam Windows certificate store
+
+Config builder dibaca dari [electron-builder.config.mjs](/Users/muham/Dev/src/webscrape-workbench/electron-builder.config.mjs), jadi build boleh tukar antara unsigned, dev-signed, atau public-signed tanpa ubah `package.json`.
 
 ## Notes
 

@@ -1,6 +1,6 @@
 {
   "name": "webscrape-workbench",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "author": {
@@ -22,41 +22,13 @@
   },
   "scripts": {
     "app": "node src/app-server.js",
+    "cert:dev": "pwsh -ExecutionPolicy Bypass -File scripts/setup-dev-code-signing-cert.ps1",
     "desktop": "electron .",
-    "dist:win": "electron-builder --win nsis",
+    "dist:win": "electron-builder --win nsis --config electron-builder.config.mjs",
+    "dist:win:signed": "pwsh -ExecutionPolicy Bypass -File scripts/build-signed-win.ps1",
     "start": "node src/cli.js",
     "scrape": "node src/cli.js",
     "smoke": "node tests/smoke.js && node tests/crawl-smoke.js && node tests/profile-smoke.js"
-  },
-  "build": {
-    "appId": "com.lopashraff.webscrapeworkbench",
-    "productName": "Webscrape Workbench",
-    "copyright": "Copyright © 2026 LopAshraff",
-    "files": [
-      "src/**/*",
-      "web/**/*",
-      "electron/**/*",
-      "package.json",
-      "package-lock.json",
-      "LICENSE"
-    ],
-    "directories": {
-      "buildResources": "build",
-      "output": "dist"
-    },
-    "win": {
-      "icon": "icon.ico",
-      "signAndEditExecutable": false,
-      "target": [
-        "nsis"
-      ]
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
